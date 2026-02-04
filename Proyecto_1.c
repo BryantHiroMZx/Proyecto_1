@@ -231,3 +231,114 @@ void llamarSiguientePaciente() {
         fclose(archivo);
     }
 }
+
+//David  
+ // Verificación de datos
+                do {
+                    printf("\n======= VERIFICACION DE DATOS =====\n");
+                    printf("Nombre completo: %s\n", nombre_completo);
+                    printf("Area: %s\n", area_nombre);
+                    printf("Cédula: %s-%lld\n", (tipo_ci == 1 ? "V" : "E"), ci_num);
+                    printf("Edad: %d años y %d meses\n", edad_anios, edad_meses);
+                    printf("Motivo: %s\n", motivo);
+                    
+                    printf("\n[1] Modificar todo\n[2] Confirmar y Guardar\n[3] Modificar dato especifico\n");
+                    scanf("%d", &n);
+
+                    if(n == 3) {
+                        printf("\n¿Que dato desea modificar?\n");
+                        printf("[1] Nombre completo\n[2] Area\n[3] Cedula\n[4] Edad\n[5] Motivo\n");
+                        scanf("%d", &opcion_especifica);
+                        
+                        if(opcion_especifica == 1) {
+                            do {
+                                printf("Nuevo nombre y apellido: ");
+                                scanf(" %[^\n]", nombre_completo);
+                                if (!validarSoloLetrasYEspacios(nombre_completo)) {
+                                    printf("[Error] Solo puede contener letras y espacios.\n");
+                                }
+                            } while (!validarSoloLetrasYEspacios(nombre_completo));
+                        }
+                        else if(opcion_especifica == 2) {
+                            do {
+                                mostrarAreas();
+                                printf("\nNueva área (0-9): ");
+                                valido = scanf("%d", &opcion_area);
+                                if (valido != 1 || opcion_area < 0 || opcion_area > 9) {
+                                    printf("[Error] Opción inválida.\n");
+                                    while(getchar() != '\n');
+                                    valido = 0;
+                                } else {
+                                    obtenerNombreArea(opcion_area, area_nombre);
+                                }
+                            } while(valido == 0);
+                        }
+                        else if(opcion_especifica == 3) {
+                            do {
+                                printf("Nuevo tipo de documento (1=Venezolana, 2=Extranjera): ");
+                                valido = scanf("%d", &tipo_ci);
+                                if (valido != 1 || (tipo_ci != 1 && tipo_ci != 2)) {
+                                    printf("[Error] Opción inválida.\n");
+                                    while(getchar() != '\n');
+                                    valido = 0;
+                                } else {
+                                    do {
+                                        printf("Nuevo número de cédula: ");
+                                        valido = scanf("%lld", &ci_num);
+                                        if (valido == 1) {
+                                            if (tipo_ci == 1) {
+                                                if (ci_num < 100000 || ci_num > 99999999) { // 6-8 dígitos
+                                                    printf("[Error] Cédula venezolana inválida (6-8 dígitos).\n");
+                                                    printf("Ejemplos: 123456, 1234567, 12345678\n");
+                                                    valido = 0;
+                                                }
+                                            } else {
+                                                if (ci_num < 1 || ci_num > 999999999999LL) { // 1 a 12 dígitos
+                                                    printf("[Error] Identificación extranjera inválida (máximo 12 dígitos).\n");
+                                                    valido = 0;
+                                                }
+                                            }
+                                        } else {
+                                            printf("[Error] Ingrese un número válido.\n");
+                                            while(getchar() != '\n');
+                                        }
+                                    } while(valido == 0);
+                                }
+                            } while(valido == 0);
+                        }
+                        else if(opcion_especifica == 4) {
+                            do {
+                                printf("Nuevos años (0-120): ");
+                                valido = scanf("%d", &edad_anios);
+                                if (valido != 1 || edad_anios < 0 || edad_anios > 120) {
+                                    printf("[Error] Años inválidos.\n");
+                                    while(getchar() != '\n');
+                                    valido = 0;
+                                } else {
+                                    printf("Nuevos meses (0-11): ");
+                                    valido = scanf("%d", &edad_meses);
+                                    if (valido != 1 || edad_meses < 0 || edad_meses > 11) {
+                                        printf("[Error] Meses inválidos (0-11).\n");
+                                        printf("Recuerde: 12 meses = 1 año\n");
+                                        while(getchar() != '\n');
+                                        valido = 0;
+                                    } else if (edad_anios == 0 && edad_meses == 0) {
+                                        printf("[Error] La edad no puede ser 0 años y 0 meses.\n");
+                                        valido = 0;
+                                    }
+                                }
+                            } while(valido == 0);
+                        }
+                        else if(opcion_especifica == 5) {
+                            do {
+                                printf("Nuevo motivo: ");
+                                scanf(" %[^\n]", motivo);
+                                if (!validarSoloLetrasYEspacios(motivo)) {
+                                    printf("[Error] Solo puede escribir letras y espacios.\n");
+                                }
+                            } while (!validarSoloLetrasYEspacios(motivo));
+                        }
+                    }
+                } while(n == 3);
+
+            } while(n == 1);
