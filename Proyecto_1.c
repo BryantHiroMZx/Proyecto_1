@@ -327,6 +327,124 @@ void contarPacientes() {
     fclose(archivo);
 }
 
+// Jhonter
+// ========== MAIN ==========
+
+int main() {
+    char nombre_completo[51], motivo[60], area_nombre[30]; 
+    long long int ci_num;
+    int edad_anios, edad_meses, n, opcion_especifica, valido, opcion_menu, opcion_area, tipo_ci;
+    Paciente paciente_actual;
+
+    do {
+        printf("\n========= MENU DE GESTION =========\n");
+        printf("1. Registrar paciente\n");
+        printf("2. Ver historico de pacientes\n");
+        printf("3. Ver pacientes en cola\n");
+        printf("4. Llamar siguiente paciente\n");
+        printf("5. Contar pacientes en cola\n");
+        printf("0. Salir del programa\n");  
+        printf("Seleccione una opcion: ");
+        scanf("%d", &opcion_menu);
+
+        if (opcion_menu == 1) {
+            do {
+                printf("\n======= REGISTRO DE PACIENTE =====\n");
+                
+                // Validación nombre completo 
+                do {
+                    printf("Nombre y Apellido: ");
+                    scanf(" %[^\n]", nombre_completo);
+                    if (!validarSoloLetrasYEspacios(nombre_completo)) {
+                        printf("[Error] Solo puede contener letras y espacios.\n");
+                    }
+                } while (!validarSoloLetrasYEspacios(nombre_completo));
+                
+                // Selección de área
+                do {
+                    mostrarAreas();
+                    printf("\nSeleccione el area (0-9): ");
+                    valido = scanf("%d", &opcion_area);
+                    if (valido != 1 || opcion_area < 0 || opcion_area > 9) {
+                        printf("[Error] Opción inválida. Seleccione entre 0 y 9.\n");
+                        while(getchar() != '\n');
+                        valido = 0;
+                    }
+                } while(valido == 0);
+                
+                obtenerNombreArea(opcion_area, area_nombre);
+
+                // Nuevo: Selección de tipo de cédula
+                do {
+                    printf("\nTipo de documento:\n[1] Venezolana (V-)\n[2] Extranjera (E-)\nOpcion: ");
+                    valido = scanf("%d", &tipo_ci);
+                    if (valido != 1 || (tipo_ci != 1 && tipo_ci != 2)) {
+                        printf("[Error] Opcion invalida. Seleccione 1 o 2.\n");
+                        while(getchar() != '\n');
+                        valido = 0;
+                    }
+                } while (valido == 0);
+
+                // Validación cédula según tipo - Más flexible para extranjeros
+                do {
+                    printf("Numero de Cedula/Identificacion: ");
+                    valido = scanf("%lld", &ci_num);
+                    if (valido == 1) {
+                        if (tipo_ci == 1) { // Venezolana
+                            // Mantenemos 6-8 dígitos para venezolanos
+                            if (ci_num < 100000 || ci_num > 99999999) { // 6-8 dígitos
+                                printf("[Error] Cédula venezolana inválida (debe tener entre 6 y 8 dígitos).\n");
+                                printf("Ejemplos válidos: 123456, 1234567, 12345678\n");
+                                valido = 0;
+                            }
+                        } else { // Extranjera
+                            // Más flexible para identificaciones extranjeras
+                            // Algunos países tienen identificaciones más cortas (4-5 dígitos)
+                            // Otros más largas (hasta 12-15 dígitos)
+                            if (ci_num < 1 || ci_num > 999999999999LL) { // 1 a 12 dígitos
+                                printf("[Error] Identificación extranjera inválida (máximo 12 dígitos).\n");
+                                printf("Acepta desde 1 hasta 12 dígitos para diferentes países.\n");
+                                valido = 0;
+                            }
+                        }
+                    } else {
+                        printf("[Error] Ingrese un número válido.\n");
+                        while(getchar() != '\n');
+                    }
+                } while(valido == 0);
+
+                // Nuevo: Validación edad con años y meses
+                do {
+                    printf("Edad (Años): ");
+                    valido = scanf("%d", &edad_anios);
+                    if (valido != 1 || edad_anios < 0 || edad_anios > 120) {
+                        printf("[Error] Años invalidos (0-120).\n");
+                        while(getchar() != '\n');
+                        valido = 0;
+                    } else {
+                        printf("Edad (Meses, 0-11): ");
+                        valido = scanf("%d", &edad_meses);
+                        if (valido != 1 || edad_meses < 0 || edad_meses > 11) {
+                            printf("[Error] Meses invalidos (debe ser entre 0 y 11).\n");
+                            printf("Recuerde: 12 meses = 1 año\n");
+                            while(getchar() != '\n');
+                            valido = 0;
+                        } else if (edad_anios == 0 && edad_meses == 0) {
+                            printf("[Error] La edad no puede ser 0 años y 0 meses.\n");
+                            valido = 0;
+                        }
+                    }
+                } while(valido == 0);
+
+                // Validación motivo
+                do {
+                    printf("Motivo: ");
+                    scanf(" %[^\n]", motivo);
+                    if (!validarSoloLetrasYEspacios(motivo)) {
+                        printf("[Error] Solo puede escribir letras y espacios.\n");
+                    }
+                } while (!validarSoloLetrasYEspacios(motivo));
+
 //David  
  // Verificación de datos
                 do {
