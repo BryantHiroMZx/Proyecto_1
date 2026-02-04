@@ -3,6 +3,77 @@
 // Jhonter Medina - 31863341
 // Yohan Jacanamijoy - 31699984
 // Lorena Benitez - 32105732
+// Robertho Guedez - 31856071
+
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <time.h>
+
+// Estructura para incluir fecha y estado / Sebastian
+typedef struct {
+    char nombre_completo[51]; 
+    char motivo[60];
+    long long int ci_num;
+    int edad_anios;     // Cambiado: años
+    int edad_meses;     // Nuevo: meses
+    char fecha_registro[20];
+    int en_cola;
+    char area[30];  // Nueva: área de atención
+} Paciente;
+
+// ========== FUNCIONES DE VALIDACIÓN ==========
+
+// Función para validar que solo contenga letras y espacios
+int validarSoloLetrasYEspacios(const char *texto) {
+    for(int i = 0; texto[i] != '\0'; i++) {
+        if(!isalpha((unsigned char)texto[i]) && texto[i] != ' ') {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+// Función para obtener fecha actual
+void obtenerFechaActual(char *fecha_str) {
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    sprintf(fecha_str, "%04d-%02d-%02d %02d:%02d:%02d", 
+            tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
+            tm.tm_hour, tm.tm_min, tm.tm_sec);
+}
+
+// Mostrar áreas disponibles
+void mostrarAreas() {
+    printf("\n======= AREAS DE ATENCION =======\n");
+    printf("0. Atencion primaria\n");
+    printf("1. Pediatria\n");
+    printf("2. Ginecologia y Obstetricia\n");
+    printf("3. Cirugia General\n");
+    printf("4. Cardiologia\n");
+    printf("5. Dermatologia\n");
+    printf("6. Oftanmologia\n");
+    printf("7. Otorrinolaringologia\n");
+    printf("8. Traumatologia\n");
+    printf("9. Urologia\n");
+}
+
+// Obtener nombre del área según opción
+void obtenerNombreArea(int opcion_area, char *area_nombre) {
+    switch(opcion_area) {
+        case 0: strcpy(area_nombre, "Atencion primaria"); break;
+        case 1: strcpy(area_nombre, "Pediatria"); break;
+        case 2: strcpy(area_nombre, "Ginecologia y Obstetricia"); break;
+        case 3: strcpy(area_nombre, "Cirugia General"); break;
+        case 4: strcpy(area_nombre, "Cardiologia"); break;
+        case 5: strcpy(area_nombre, "Dermatologia"); break;
+        case 6: strcpy(area_nombre, "Oftanmologia"); break;
+        case 7: strcpy(area_nombre, "Otorrinolaringologia"); break;
+        case 8: strcpy(area_nombre, "Traumatologia"); break;
+        case 9: strcpy(area_nombre, "Urologia"); break;
+        default: strcpy(area_nombre, "Sin area asignada"); break;
+    }
+}
 
 // Bryant
 // ========== ARCHIVO DE PACIENTES (HISTÓRICO) ==========
