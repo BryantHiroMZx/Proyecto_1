@@ -145,3 +145,89 @@ void eliminarDeCola(long long int ci) {
         printf("No se encontró al paciente en la cola.\n");
     }
 }
+
+// Lorena
+// ========== FUNCIÓN DE LLAMADOS ==========
+
+void llamarSiguientePaciente() {
+    FILE *archivo = fopen("cola_pacientes.txt", "r");
+    if (archivo == NULL) {
+        printf("No hay pacientes en la cola de espera.\n");
+        return;
+    }
+
+    Paciente p;
+    char primeraLinea[256];
+    
+    // Leer la primera línea completa
+    if (fgets(primeraLinea, sizeof(primeraLinea), archivo) != NULL) {
+        if (sscanf(primeraLinea, "%50[^|]|%lld|%d.%d|%59[^|]|%19[^|]|%29[^\n]",
+                   p.nombre_completo, &p.ci_num, &p.edad_anios, &p.edad_meses,
+                   p.motivo, p.fecha_registro, p.area) == 7) {
+            
+            printf("\n📢 LLAMANDO SIGUIENTE PACIENTE 📢\n");
+            printf("Nombre: %s\n", p.nombre_completo);
+            printf("C.I: %lld\n", p.ci_num);
+            printf("Edad: %d años y %d meses\n", p.edad_anios, p.edad_meses);
+            printf("Motivo: %s\n", p.motivo);
+            printf("Hora registro: %s\n", p.fecha_registro);
+            printf("Area: %s\n", p.area);
+
+            fclose(archivo);
+            
+            eliminarDeCola(p.ci_num);
+            
+            // Actualizar estado en archivo histórico 
+            FILE *hist = fopen("pacientes.txt", "r");
+            if (hist == NULL) {
+                printf("No se pudo abrir el historico.\n");
+                return;
+            }
+            
+            FILE *temp = fopen("temp.txt", "w");
+            if (temp == NULL) {
+                printf("Error al crear archivo temporal.\n");
+                fclose(hist);
+                return;
+            }
+            
+            Paciente p2;
+            char lineaHist[256];
+            int actualizado = 0;
+            
+            while (fgets(lineaHist, sizeof(lineaHist), hist)) {
+                if (sscanf(lineaHist, "%50[^|]|%lld|%d.%d|%59[^|]|%19[^|]|%d|%29[^\n]",
+                          p2.nombre_completo, &p2.ci_num, &p2.edad_anios, &p2.edad_meses,
+                          p2.motivo, p2.fecha_registro, &p2.en_cola, p2.area) == 8) {
+                    
+                    if (p2.ci_num == p.ci_num) {
+                        p2.en_cola = 0;
+                        actualizado = 1;
+                    }
+                    
+                    fprintf(temp, "%s|%lld|%d.%d|%s|%s|%d|%s\n",
+                            p2.nombre_completo, p2.ci_num, p2.edad_anios, p2.edad_meses,
+                            p2.motivo, p2.fecha_registro, p2.en_cola, p2.area);
+                }
+            }
+            
+            fclose(hist);
+            fclose(temp);
+            
+            if (actualizado) {
+                remove("pacientes.txt");
+                rename("temp.txt", "pacientes.txt");
+                printf("Estado actualizado en el historico.\n");
+            } else {
+                remove("temp.txt");
+            }
+            
+        } else {
+            printf("Error al leer datos del paciente.\n");
+            fclose(archivo);
+        }
+    } else {
+        printf("\n✅ No quedan pacientes en la cola de espera.\n");
+        fclose(archivo);
+    }
+}
