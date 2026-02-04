@@ -303,6 +303,30 @@ void llamarSiguientePaciente() {
     }
 }
 
+// Yohan
+// ========== FUNCIÓN RECURSIVA ==========
+
+int funcionRecursiva(FILE *archivo) {
+    char linea[256];
+    if (fgets(linea, sizeof(linea), archivo) == NULL) {
+        return 0;
+    }
+    return 1 + funcionRecursiva(archivo);
+}
+
+// ========== CONTAR PACIENTES EN COLA ==========
+
+void contarPacientes() {
+    FILE *archivo = fopen("cola_pacientes.txt", "r");
+    if (archivo == NULL) {
+        printf("\nNo hay pacientes en cola.\n");
+        return;
+    }
+    int total = funcionRecursiva(archivo);
+    printf("\nTotal de pacientes en cola actualmente: %d\n", total);
+    fclose(archivo);
+}
+
 //David  
  // Verificación de datos
                 do {
@@ -413,3 +437,37 @@ void llamarSiguientePaciente() {
                 } while(n == 3);
 
             } while(n == 1);
+            
+            // Yohan
+            // Guardar en estructura
+            strncpy(paciente_actual.nombre_completo, nombre_completo, 50);
+            strncpy(paciente_actual.motivo, motivo, 59);
+            strncpy(paciente_actual.area, area_nombre, 29);
+            paciente_actual.ci_num = ci_num;
+            paciente_actual.edad_anios = edad_anios;
+            paciente_actual.edad_meses = edad_meses;
+            obtenerFechaActual(paciente_actual.fecha_registro);
+            paciente_actual.en_cola = 1;
+
+            guardarPaciente(paciente_actual);
+            guardarEnCola(paciente_actual);
+            
+        } 
+        else if (opcion_menu == 2) {
+            cargarPacientes();
+        }
+        else if (opcion_menu == 3) {
+            cargarCola();
+        }
+        else if (opcion_menu == 4) {
+            llamarSiguientePaciente();
+        }
+        else if (opcion_menu == 5) {
+            contarPacientes();
+        }
+        
+    } while(opcion_menu != 0);  
+
+    printf("Saliendo del programa...\n");
+    return 0;
+}
